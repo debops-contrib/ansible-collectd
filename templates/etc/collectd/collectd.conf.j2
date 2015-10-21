@@ -1,0 +1,70 @@
+# {{ ansible_managed }}
+
+# Config file for collectd(1).
+
+##############################################################################
+# Global settings for the daemon.                                            #
+##############################################################################
+
+#Hostname "localhost"
+FQDNLookup true
+#BaseDir "/var/lib/collectd"
+#PluginDir "/usr/lib/collectd"
+#TypesDB "/usr/share/collectd/types.db" "/etc/collectd/my_types.db"
+
+#----------------------------------------------------------------------------#
+# Interval at which to query values. This may be overwritten on a per-plugin #
+# base by using the 'Interval' option of the LoadPlugin block:               #
+#   <LoadPlugin foo>                                                         #
+#       Interval 60                                                          #
+#   </LoadPlugin>                                                            #
+#----------------------------------------------------------------------------#
+#Interval 10
+
+#Timeout 2
+#ReadThreads 5
+#WriteThreads 5
+
+# Limit the size of the write queue. Default is no limit. Setting up a limit
+# is recommended for servers handling a high volume of traffic.
+#WriteQueueLimitHigh 1000000
+#WriteQueueLimitLow   800000
+
+##############################################################################
+# Plugins.                                                                   #
+##############################################################################
+
+{% for plugin in collectd_all_plugins|sort                            %}
+LoadPlugin {{ plugin }}
+{%   if plugin in collectd_plugin_configs                             %}
+{%     set plugin_config = collectd_plugin_configs[plugin]            %}
+{%   elif plugin in collectd_plugin_default_configs                   %}
+{%     set plugin_config = collectd_plugin_default_configs[plugin]    %}
+{%   else                                                             %}
+{%     set plugin_config = False                                      %}
+{%   endif                                                            %}
+{%   if plugin_config                                                 %}
+<Plugin {{plugin}}>
+{%     if 'options' in plugin_config                                  %}
+# {{ plugin }} -> options
+{%       for option in collectd_plugin_configs[plugin]['options']     %}
+{%         if option.enabled|d(true,true)                             %}
+  {{ option.name }} "{{ option.value }}"
+{%         else                                                       %}
+  # Option {{ option.name }} is disabled
+{%         endif                                                      %}
+{%       endfor                                                       %}
+{%     endif                                                          %}
+{%     if 'raw' in collectd_plugin_configs[plugin]                    %}
+# {{ plugin }} -> raw
+  {{ collectd_plugin_configs[plugin].raw|indent(2) }}
+{%     endif                                                          %}
+</Plugin>
+{%   endif                                                            %}
+{% endfor                                                             %}
+
+
+<Include "/etc/collectd/collectd.conf.d">
+	Filter "*.conf"
+</Include>
+

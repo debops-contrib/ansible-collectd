@@ -1,0 +1,70 @@
+---
+
+# .. envvar:: collectd_rrd_plugins
+#
+# Plugins to enable when rrd is enabled.
+collectd_rrd_plugins:
+  True: [ 'rrdtool' ]
+  False: []
+
+
+# .. envvar:: collectd_network_plugins
+#
+# Plugins to enable when network is enabled.
+collectd_network_plugins:
+  True: [ 'network' ]
+  False: []
+
+
+# .. envvar:: collectd_all_plugins
+#
+# List of all enabled plugins.
+collectd_all_plugins: '{{ collectd_plugins_default + collectd_plugins_host + collectd_plugins_group + collectd_rrd_plugins[collectd_rrd_enable] + collectd_network_plugins[collectd_network_client|bool] + collectd_log_plugins }}'
+
+
+# .. envvar:: collectd_plugin_default_configs
+#
+# Default configuration of plugins. See :ref:`collectd_plugin_configs` for
+# the description.
+collectd_plugin_default_configs:
+  df:
+    raw: |
+      # ignore rootfs; else, the root file-system would appear twice, causing
+      # one of the updates to fail and spam the log
+      FSType rootfs
+      # ignore the usual virtual / temporary file-systems
+      FSType sysfs
+      FSType proc
+      FSType devtmpfs
+      FSType devpts
+      FSType tmpfs
+      FSType fusectl
+      FSType cgroup
+      IgnoreSelected true
+
+  syslog:
+    options:
+      - name: 'LogLevel'
+        value: 'info'
+
+  logfile:
+    options:
+      - name: 'LogLevel'
+        value: 'info'
+      - name: 'File'
+        value: 'STDOUT'
+      - name: 'Timestamp'
+        value: 'true'
+      - name: 'PrintSeverity'
+        value: 'false'
+
+  rrdtool:
+    options:
+      - name: 'DataDir'
+        value: "/var/lib/collectd/rrd"
+
+  network:
+    options:
+      - name: 'Server'
+        value: '"{{collectd_network_client_server_addr }}" "{{ collectd_network_client_server_port }}"'
+        enabled: collectd_network_client

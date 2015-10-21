@@ -1,0 +1,80 @@
+---
+
+# .. envvar:: collectd_plugins_default
+#
+# List of plugins enabled by default. This list is meant for all hosts.
+collectd_plugins_default: [ 'cpu', 'df', 'disk', 'entropy', 'interface', 'irq', 'load', 'memory', 'processes', 'swap', 'users' ]
+
+
+# .. envvar:: collectd_plugins_host
+#
+# List of enabled plugins. This list is meant for specific hosts.
+collectd_plugins_host: []
+
+
+# .. envvar:: collectd_plugins_group
+#
+# List of enabled plugins. This list is meant for specific groups of hosts.
+collectd_plugins_group: []
+
+
+# .. envvar:: collectd_rrd_enable
+#
+# Should rrdtool plugin be enabled? Probably you want to disable it on client
+# hosts and enable only on a server.
+collectd_rrd_enable: False
+
+
+# .. envvar:: collectd_network_client
+#
+# Is the host a client?
+collectd_network_client: '{{ (not collectd_rrd_enable) }}'
+
+
+# .. envvar:: collectd_network_client_server_addr
+#
+# Host to send statistics to.
+collectd_network_client_server_addr: 'collectd.{{ ansible_domain }}'
+
+
+# .. envvar:: collectd_network_client_server_port
+#
+# Port of the remote server.
+collectd_network_client_server_port: 25826
+
+
+# .. envvar:: collectd_log_plugins
+#
+# Log plugins to enable. Can be `syslog` and/or `logfile`. You can disable
+# loging by setting this to empty list.
+collectd_log_plugins: [ 'syslog' ]          
+
+
+# .. envvar:: collectd_plugin_configs
+# Plugins configuration. Key is the name of the plugin and value is it's
+# configuration. With this dictionary you can overwrite configuration
+# options set in collectd_plugin_default_configs (whole plugin
+# configuration will be overwritten).
+#
+# Each value should be a dict with at least one of the attributes:
+# - raw
+# - options
+#
+# raw specifies raw configuration eg:
+# memcached:
+#   raw: |
+#     <Instance "local">
+#       Socket "/var/run/memcached.sock"
+#     </Instance>
+#
+# options specifies a list of dicts with folowing attributes:
+# - name - name of the variable
+# - value - value of the variable
+# - enabled - boolean value determinig if option will be set
+# Example:
+# rrdtool: 
+#   options: 
+#     - name: 'DataDir' 
+#       value: "/var/lib/collectd/rrd"
+#
+collectd_plugin_configs: {}

@@ -1,0 +1,17 @@
+---
+# tasks file for debops.collectd
+
+- name: collectd_all_plugins
+  debug:
+    msg: '{{ collectd_all_plugins }}'
+
+- name: Install config file
+  template:
+    src: '{{ item }}.j2'
+    dest: '/{{ item }}'
+    owner: 'root'
+    group: 'root'
+    mode: '0640'
+  with_items:
+    - 'etc/collectd/collectd.conf'
+  notify: [ 'Restart collectd' ]
