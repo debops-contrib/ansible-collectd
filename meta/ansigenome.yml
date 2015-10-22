@@ -18,5 +18,6 @@ ansigenome_info:
 
   synopsis: |
     This role installs [collectd](https://collectd.org/), a deamon for
-    system statistics collection.
+    system statistics collection. It supports storing data in local RRD files
+    or forwarding it to the central server.
 
