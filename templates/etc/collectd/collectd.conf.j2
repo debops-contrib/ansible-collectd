@@ -46,8 +46,8 @@ LoadPlugin {{ plugin }}
 {%   if plugin_config                                                 %}
 <Plugin {{plugin}}>
 {%     if 'options' in plugin_config                                  %}
-# {{ plugin }} -> options
-{%       for option in collectd_plugin_configs[plugin]['options']     %}
+  # {{ plugin }} -> options
+{%       for option in plugin_config['options']                       %}
 {%         if option.enabled|d(true,true)                             %}
   {{ option.name }} "{{ option.value }}"
 {%         else                                                       %}
@@ -55,9 +55,9 @@ LoadPlugin {{ plugin }}
 {%         endif                                                      %}
 {%       endfor                                                       %}
 {%     endif                                                          %}
-{%     if 'raw' in collectd_plugin_configs[plugin]                    %}
-# {{ plugin }} -> raw
-  {{ collectd_plugin_configs[plugin].raw|indent(2) }}
+{%     if 'raw' in plugin_config                                      %}
+  # {{ plugin }} -> raw
+  {{ plugin_config.raw|indent(2) }}
 {%     endif                                                          %}
 </Plugin>
 {%   endif                                                            %}

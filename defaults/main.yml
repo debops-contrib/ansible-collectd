@@ -1,5 +1,18 @@
 ---
 
+# .. envvar:: collectd_packages_base
+#
+# Base packages to install
+collectd_packages_base:
+  - 'collectd-core'
+
+
+# .. envvar:: collectd_packages_additional
+#
+# Additional packages to install
+collectd_packages_additional: []
+
+
 # .. envvar:: collectd_plugins_default
 #
 # List of plugins enabled by default. This list is meant for all hosts.

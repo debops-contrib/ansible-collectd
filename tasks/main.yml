@@ -1,9 +1,24 @@
 ---
-# tasks file for debops.collectd
 
-- name: collectd_all_plugins
-  debug:
-    msg: '{{ collectd_all_plugins }}'
+- name: Install required packages
+  apt:
+    name: '{{ item }}'
+    state: 'present'
+    install_recommends: False
+  with_flattened:
+    - collectd_packages_base
+    - collectd_packages_additional
+
+- name: Make sure /etc/collectd and /etc/collectd/collectd.conf.d exists
+  file:
+    path: '{{ item }}'
+    state: 'directory'
+    owner: 'root'
+    group: 'root'
+    mode: '0750'
+  with_items:
+    - '/etc/collectd'
+    - '/etc/collectd/collectd.conf.d'
 
 - name: Install config file
   template:
