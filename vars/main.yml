@@ -67,4 +67,4 @@ collectd_plugin_default_configs:
     options:
       - name: 'Server'
         value: '"{{collectd_network_client_server_addr }}" "{{ collectd_network_client_server_port }}"'
-        enabled: collectd_network_client
+        enabled: '{{ collectd_network_client }}'

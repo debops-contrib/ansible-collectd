@@ -7,7 +7,7 @@
     install_recommends: False
   with_flattened:
     - collectd_packages_base
-    - collectd_packages_additional
+    - collectd_packages
 
 - name: Make sure /etc/collectd and /etc/collectd/collectd.conf.d exists
   file:

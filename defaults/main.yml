@@ -1,4 +1,14 @@
 ---
+# Default variables
+# =================
+
+# .. contents:: Sections
+#    :local:
+#
+# ----------------------------------
+#   Packages configuration
+# ----------------------------------
+
 
 # .. envvar:: collectd_packages_base
 #
@@ -7,10 +17,28 @@ collectd_packages_base:
   - 'collectd-core'
 
 
-# .. envvar:: collectd_packages_additional
+# .. envvar:: collectd_packages
 #
 # Additional packages to install
-collectd_packages_additional: []
+collectd_packages: []
+
+
+# ----------------------------------
+#   Base configuration
+# ----------------------------------
+
+
+# .. envvar:: collectd_interval
+#
+# Resolution of collected data. This should not be changed after deployment
+# because it may break existing RRD files. For more information check 
+# https://collectd.org/wiki/index.php/Interval.
+collectd_interval: 10
+
+
+# ----------------------------------
+#   Enabled plugins
+# ----------------------------------
 
 
 # .. envvar:: collectd_plugins_default
@@ -31,11 +59,21 @@ collectd_plugins_host: []
 collectd_plugins_group: []
 
 
+# ----------------------------------
+#   RRD output configuration
+# ----------------------------------
+
+
 # .. envvar:: collectd_rrd_enable
 #
 # Should rrdtool plugin be enabled? Probably you want to disable it on client
 # hosts and enable only on a server.
 collectd_rrd_enable: False
+
+
+# ----------------------------------
+#   Network configuration
+# ----------------------------------
 
 
 # .. envvar:: collectd_network_client
@@ -56,6 +94,11 @@ collectd_network_client_server_addr: 'collectd.{{ ansible_domain }}'
 collectd_network_client_server_port: 25826
 
 
+# ----------------------------------
+#   Logging configuration
+# ----------------------------------
+
+
 # .. envvar:: collectd_log_plugins
 #
 # Log plugins to enable. Can be `syslog` and/or `logfile`. You can disable
@@ -63,7 +106,13 @@ collectd_network_client_server_port: 25826
 collectd_log_plugins: [ 'syslog' ]          
 
 
+# ----------------------------------
+#   Plugins configuration
+# ----------------------------------
+
+
 # .. envvar:: collectd_plugin_configs
+#
 # Plugins configuration. Key is the name of the plugin and value is it's
 # configuration. With this dictionary you can overwrite configuration
 # options set in collectd_plugin_default_configs (whole plugin

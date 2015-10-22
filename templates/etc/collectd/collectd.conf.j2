@@ -6,8 +6,8 @@
 # Global settings for the daemon.                                            #
 ##############################################################################
 
-#Hostname "localhost"
-FQDNLookup true
+Hostname "{{ ansible_fqdn }}"
+#FQDNLookup true
 #BaseDir "/var/lib/collectd"
 #PluginDir "/usr/lib/collectd"
 #TypesDB "/usr/share/collectd/types.db" "/etc/collectd/my_types.db"
@@ -19,7 +19,7 @@ FQDNLookup true
 #       Interval 60                                                          #
 #   </LoadPlugin>                                                            #
 #----------------------------------------------------------------------------#
-#Interval 10
+Interval {{ collectd_interval|d(10) }}
 
 #Timeout 2
 #ReadThreads 5
@@ -49,7 +49,13 @@ LoadPlugin {{ plugin }}
   # {{ plugin }} -> options
 {%       for option in plugin_config['options']                       %}
 {%         if option.enabled|d(true,true)                             %}
+{%           if ((option.value|string|length < 2) or 
+                 ((option.value|string)[0]=='"' and
+                  (option.value|string)[-1]=='"'))                    %}
+  {{ option.name }} {{ option.value }}
+{%           else                                                     %}
   {{ option.name }} "{{ option.value }}"
+{%           endif                                                    %}
 {%         else                                                       %}
   # Option {{ option.name }} is disabled
 {%         endif                                                      %}
