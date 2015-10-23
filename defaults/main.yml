@@ -59,6 +59,13 @@ collectd_plugins_host: []
 collectd_plugins_group: []
 
 
+# .. envvar:: collectd_nginx_autodetect
+#
+# Enable nginx plugin autodetection. It will enable nginx plugin if there is
+# nginx running on the server.
+collectd_nginx_autodetect: True
+
+
 # ----------------------------------
 #   RRD output configuration
 # ----------------------------------

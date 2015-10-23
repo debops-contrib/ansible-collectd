@@ -20,6 +20,15 @@
     - '/etc/collectd'
     - '/etc/collectd/collectd.conf.d'
 
+- name: Check if nginx is installed
+  stat:
+    path: '/etc/nginx/sites-available'
+  register: collectd_register_nginxdir
+
+- name: Check if nginx plugin should be enabled
+  set_fact:
+    collectd_register_enable_nginx: '{{ collectd_register_nginxdir.stat.exists and collectd_nginx_autodetect is defined and collectd_nginx_autodetect }}'
+
 - name: Install config file
   template:
     src: '{{ item }}.j2'

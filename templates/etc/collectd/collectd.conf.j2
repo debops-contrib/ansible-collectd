@@ -1,5 +1,5 @@
 # {{ ansible_managed }}
-
+{% from 'collectd_macros.j2' import enable_plugin with context %}
 # Config file for collectd(1).
 
 ##############################################################################
@@ -35,42 +35,13 @@ Interval {{ collectd_interval|d(10) }}
 ##############################################################################
 
 {% for plugin in collectd_all_plugins|sort                            %}
-LoadPlugin {{ plugin }}
-{%   if plugin in collectd_plugin_configs                             %}
-{%     set plugin_config = collectd_plugin_configs[plugin]            %}
-{%   elif plugin in collectd_plugin_default_configs                   %}
-{%     set plugin_config = collectd_plugin_default_configs[plugin]    %}
-{%   else                                                             %}
-{%     set plugin_config = False                                      %}
-{%   endif                                                            %}
-{%   if plugin_config                                                 %}
-<Plugin {{plugin}}>
-{%     if 'options' in plugin_config                                  %}
-  # {{ plugin }} -> options
-{%       for option in plugin_config['options']                       %}
-{%         if option.enabled|d(true,true)                             %}
-{%           if ((option.value|string|length < 2) or 
-                 ((option.value|string)[0]=='"' and
-                  (option.value|string)[-1]=='"'))                    %}
-  {{ option.name }} {{ option.value }}
-{%           else                                                     %}
-  {{ option.name }} "{{ option.value }}"
-{%           endif                                                    %}
-{%         else                                                       %}
-  # Option {{ option.name }} is disabled
-{%         endif                                                      %}
-{%       endfor                                                       %}
-{%     endif                                                          %}
-{%     if 'raw' in plugin_config                                      %}
-  # {{ plugin }} -> raw
-  {{ plugin_config.raw|indent(2) }}
-{%     endif                                                          %}
-</Plugin>
-{%   endif                                                            %}
+{{ enable_plugin(plugin) }}
 {% endfor                                                             %}
 
+{% if collectd_register_enable_nginx|bool                             %}
+{{ enable_plugin('nginx') }}
+{% endif                                                              %}
 
 <Include "/etc/collectd/collectd.conf.d">
 	Filter "*.conf"
 </Include>
-

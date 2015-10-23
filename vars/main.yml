@@ -68,3 +68,7 @@ collectd_plugin_default_configs:
       - name: 'Server'
         value: '"{{collectd_network_client_server_addr }}" "{{ collectd_network_client_server_port }}"'
         enabled: '{{ collectd_network_client }}'
+  nginx:
+    options:
+      - name: URL
+        value: 'http://localhost/status'
