@@ -20,14 +20,16 @@
     - '/etc/collectd'
     - '/etc/collectd/collectd.conf.d'
 
-- name: Check if nginx is installed
-  stat:
-    path: '/etc/nginx/sites-available'
-  register: collectd_register_nginxdir
+- name: Check what plugins should be enabled
+  script: script/detect_services.sh 
+  register: collectd_register_detected_services_raw
+  when: collectd_plugin_autodetect is defined and collectd_plugin_autodetect
+  changed_when: False
 
-- name: Check if nginx plugin should be enabled
+- name: Extract list of plugins
   set_fact:
-    collectd_register_enable_nginx: '{{ collectd_register_nginxdir.stat.exists and collectd_nginx_autodetect is defined and collectd_nginx_autodetect }}'
+    collectd_register_detected_services: '{{ collectd_register_detected_services_raw.stdout_lines }}'
+  when: collectd_plugin_autodetect is defined and collectd_plugin_autodetect
 
 - name: Install config file
   template:

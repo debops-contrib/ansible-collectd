@@ -38,8 +38,14 @@ Interval {{ collectd_interval|d(10) }}
 {{ enable_plugin(plugin) }}
 {% endfor                                                             %}
 
-{% if collectd_register_enable_nginx|bool                             %}
-{{ enable_plugin('nginx') }}
+{% if collectd_plugin_autodetect is defined and
+      collectd_plugin_autodetect|bool                                 %}
+# Autodetected plugins
+{%   for plugin in collectd_register_detected_services                %}
+{{ enable_plugin(plugin) }}
+{%   else                                                             %}
+# No plugins were autodetected
+{%   endfor                                                           %}
 {% endif                                                              %}
 
 <Include "/etc/collectd/collectd.conf.d">

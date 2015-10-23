@@ -59,11 +59,11 @@ collectd_plugins_host: []
 collectd_plugins_group: []
 
 
-# .. envvar:: collectd_nginx_autodetect
+# .. envvar:: collectd_plugin_autodetect
 #
-# Enable nginx plugin autodetection. It will enable nginx plugin if there is
-# nginx running on the server.
-collectd_nginx_autodetect: True
+# Enable plugin autodetection. Currently it will:
+# - enable nginx plugin if there is nginx on the server.
+collectd_plugin_autodetect: True
 
 
 # ----------------------------------
